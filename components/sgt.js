@@ -11,7 +11,7 @@ class SGT_template {
 	constructor(elementConfig) {
 		
 		this.elementConfig = elementConfig; /* console.log elementConfig to note what data you have access to */
-		//console.log(this.elementConfig);
+		console.log(this.elementConfig);
 		this.data = {};
 		//console.log(this.data);
 		this.addEventHandlers = this.addEventHandlers.bind(this);
@@ -21,6 +21,8 @@ class SGT_template {
 		this.createStudent = this.createStudent.bind(this);
 		this.displayAllStudents = this.displayAllStudents.bind(this);
 		this.deleteStudent = this.deleteStudent.bind(this);
+		this.retrieveData = this.retrieveData.bind(this);
+		
 		
 
 	}
@@ -36,6 +38,8 @@ class SGT_template {
 	addEventHandlers() {
 		this.elementConfig.addButton.on('click',this.handleAdd)
 		this.elementConfig.cancelButton.on('click',this.handleCancel)
+		$('#retrieveDataButton').on('click',this.retrieveData)
+		//this.elementConfig.retrieveDataButton.on('click',this.retrieveDataFromServer)
 		//$('#addButton').on('click',handleAdd)
 		//$('#cancelButton').on('click',handleCancel)
 	}
@@ -187,8 +191,8 @@ class SGT_template {
 		
 		/* var studentArr = Object.keys(this.data)
 		for (var i = 0 ; i <= studentArr ; i++) */
-		//this.elementConfig.displayArea.empty();
-		$('#displayArea').empty();
+		this.elementConfig.displayArea.empty();
+		//$('#displayArea').empty();
 
 		for(var key in this.data)	
 		$('#displayArea').append(this.data[key].render())
@@ -239,7 +243,7 @@ class SGT_template {
 		ESTIMATED TIME: 30 minutes
 	*/
 	deleteStudent(id) {
-debugger
+
 		if(this.doesStudentExist(id)){
 			delete this.data[id];
 			return true;
@@ -267,4 +271,34 @@ debugger
 	updateStudent() {
 
 	}
+
+	retrieveData(){
+			var ajaxConfigObject = {
+				dataType : "json",
+				url : `http://s-apis.learningfuze.com/sgt/get`,
+				method: 'post',
+				data : {
+					"api_key" : 'sdYlOgn0jhOB' 
+					},
+				success : function(response){
+					console.log('response:',response);
+					this.data = {};
+					for(var i = 0 ; i < response.data.length; i++ )
+					this.createStudent(response.data[i].id,response.data[i].name,response.data[i].grade,response.data[i].course);
+					this.displayAllStudents();
+					},
+				error:function(response){
+					console.log('Error:', response);
+				},
+				
+			}
+			ajaxConfigObject.success = ajaxConfigObject.success.bind(this)
+			$.ajax(ajaxConfigObject);
+			
+		}
+		
+
+
+
+
 }
