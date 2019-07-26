@@ -44,7 +44,7 @@ In this feature, You will add the functionality of pulling student info from a s
                 - You contact the server and get the data you were requesting
                 - You contact the server, but there is an error of some kind that prevents you from receiving what you requested
                 - Always check the server response so that you know whether or not your request was truly successful or if you simply made contact with the server
-            - error:
+            - error: 
               - Callback function that is called when there is an error contacting the server
         - Note the different ways of attaching success and error callbacks to your AJAX call
           - Documentation: [AJAX Callbacks](http://www.binaryintellect.net/articles/749ed588-b408-4a7e-94da-77549c00e803.aspx)

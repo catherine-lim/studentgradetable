@@ -22,6 +22,7 @@ class SGT_template {
 		this.displayAllStudents = this.displayAllStudents.bind(this);
 		this.deleteStudent = this.deleteStudent.bind(this);
 		this.retrieveData = this.retrieveData.bind(this);
+		this.addNewStudentToServer = this.addNewStudentToServer.bind(this);
 		
 		
 
@@ -141,14 +142,15 @@ class SGT_template {
 	ESTIMATED TIME: 1 hour
 	*/
 	handleAdd() {
-		var name = this.elementConfig.nameInput.val()
-		var grade = this.elementConfig.gradeInput.val()
-		var course = this.elementConfig.courseInput.val()
+		var name = this.elementConfig.nameInput.val();
+		var course = this.elementConfig.courseInput.val();
+		var grade = this.elementConfig.gradeInput.val();
 
 		this.createStudent(name,course,grade);
- 
-		this.clearInputs() 
-		this.displayAllStudents()
+		this.addNewStudentToServer(name,course,grade);
+		
+		this.clearInputs() ;
+		this.displayAllStudents();
 	}
 
 	/* readStudent -
@@ -284,7 +286,7 @@ class SGT_template {
 					console.log('response:',response);
 					this.data = {};
 					for(var i = 0 ; i < response.data.length; i++ )
-					this.createStudent(response.data[i].id,response.data[i].name,response.data[i].grade,response.data[i].course);
+					this.createStudent(response.data[i].name,response.data[i].course,response.data[i].grade,response.data[i].id);
 					this.displayAllStudents();
 					},
 				error:function(response){
@@ -296,9 +298,26 @@ class SGT_template {
 			$.ajax(ajaxConfigObject);
 			
 		}
-		
+	addNewStudentToServer(studentName,studentCourse,studentGrade){
+		var ajaxConfigObject = {
+			dataType : "json",
+			url : `http://s-apis.learningfuze.com/sgt/create`,
+			method: 'post',
+			data : {
+				"api_key" : 'sdYlOgn0jhOB' ,
+				"name" : studentName,
+				"course" : studentCourse,
+				"grade" : studentGrade,
+				},
+			success : function(response){
+			//	this.retrieveData();
+			}.bind(this),
+			error:function(response){
 
+			},
+	}	
+$.ajax(ajaxConfigObject);
 
-
+	}
 
 }
