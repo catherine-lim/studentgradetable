@@ -21,6 +21,7 @@ class Student {
 			course: course,
 			grade: parseInt(grade)
 		};
+		//console.log(this.data);
 		this.deleteCallback = deleteCallback;
 		this.domElements = {
 			row: null,
@@ -44,7 +45,8 @@ class Student {
 	ESTIMATED TIME: 30 minutes
 	*/
 	getData() {
-
+		return this.data;
+		
 	}
 
 	/* render - create and return a table row (TR) with 4 table cells (TD) in them:
@@ -65,9 +67,44 @@ class Student {
 	ESTIMATED TIME: 2 hours
 	*/
 	render() {
+		
+		/* var newTR = $('<tr>'); 
+		var tdName = $('<td>').text(this.data.name);
+		newTR.append(tdName);
+		var tdCourse = $('<td>').text(this.data.course);
+		newTR.append(tdCourse);
+		var tdGrade = $('<td>').text(this.data.grade);
+		newTR.append(tdGrade);
+		var tdOperation = $('<td>').text(this.data.operations);
+		newTR.append(tdOperation);
+
+		var button = $('<button>').text('delete').on('click',this.handleDelete);
+		tdOperation.append(button);
+
+		this.domElements.row.append(newTR); */
+
+		this.domElements.row = $('<tr>'); 
+		this.domElements.name = $('<td>').text(this.data.name);
+		this.domElements.course = $('<td>').text(this.data.course);
+		this.domElements.grade = $('<td>').text(this.data.grade);
+		this.domElements.operations = $('<td>')
+
+		var button = $('<button>').text('delete');
+		var deleteButton= $(button).on('click',this.handleDelete);
+
+		button.append(deleteButton);
+		this.domElements.operations.append(button);
+
+		this.domElements.row.append(this.domElements.name);
+		this.domElements.row.append(this.domElements.course);
+		this.domElements.row.append(this.domElements.grade);
+		this.domElements.row.append(this.domElements.operations);
+
+		
+
+		return this.domElements.row;
 
 	}
-
 	/* handleDelete - call the SGT_template delete callback, and remove this student's dom element
 	purpose:
 		- call the callback that was passed into the constructor - give it this object's id as an argument
@@ -75,8 +112,10 @@ class Student {
 		reference you stored in this.domElements)
 	ESTIMATED TIME: 15 minutes
 	*/
-	handleDelete() {
+	handleDelete(){
 
+		this.deleteCallback(this.data.id);
+		this.domElements.row.remove();
 	}
 
 	/* update - change a value in the student record
@@ -95,7 +134,31 @@ class Student {
 	return: (boolean) true if it was changed, false if it was not
 	ESTIMATED TIME: 1.5 hours
 	*/
-	update() {
-
+	update(field,value) {
+	switch(field){
+	case 'id' :
+		this.data.id = value;
+		this.domElements.id.text(value);
+		this.domElements.id = value; 
+		return true;
+	case 'name' :
+		this.data.name = value;
+		this.domElements.name.text(value);
+		this.domElements.name = value; 
+		return true;
+	case 'course' :
+		this.data.course = value;
+		this.domElements.course.text(value);
+		this.domElements.course = value; 
+		return true;
+	case 'grade':
+		this.data.grade = parseInt(value);
+		this.domElements.grade.text(value);
+		this.domElements.grade = value; 
+		return true;
+		default:
+				return false;
+}
+	
 	}
 }

@@ -9,9 +9,19 @@ class SGT_template {
 	return: undefined
 	*/
 	constructor(elementConfig) {
+		
 		this.elementConfig = elementConfig; /* console.log elementConfig to note what data you have access to */
+		//console.log(this.elementConfig);
 		this.data = {};
-
+		//console.log(this.data);
+		this.addEventHandlers = this.addEventHandlers.bind(this);
+		this.handleAdd = this.handleAdd.bind(this);
+		this.clearInputs = this.clearInputs.bind(this);
+		this.handleCancel = this.handleCancel.bind(this);
+		this.createStudent = this.createStudent.bind(this);
+		this.displayAllStudents = this.displayAllStudents.bind(this);
+		this.deleteStudent = this.deleteStudent.bind(this);
+		
 
 	}
 
@@ -24,8 +34,10 @@ class SGT_template {
 	ESTIMATED TIME: 15 minutes
 	*/
 	addEventHandlers() {
-
-
+		this.elementConfig.addButton.on('click',this.handleAdd)
+		this.elementConfig.cancelButton.on('click',this.handleCancel)
+		//$('#addButton').on('click',handleAdd)
+		//$('#cancelButton').on('click',handleCancel)
 	}
 
 	/* clearInputs - Clear the values in the three form inputs
@@ -35,6 +47,14 @@ class SGT_template {
 	*/
 	clearInputs() {
 
+		this.elementConfig.nameInput.val('');
+		this.elementConfig.gradeInput.val('');
+		this.elementConfig.courseInput.val('');
+
+	/* $('#studentName').val('')
+		$('#studentCourse').val('')
+		$('#studentGrade').val('') */
+
 	}
 
 	/* handleCancel - function to handle the cancel button press (should clear out all values in the inputs)
@@ -43,7 +63,8 @@ class SGT_template {
 	ESTIMATED TIME: 15 minutes
 	*/
 	handleCancel() {
-
+		this.clearInputs() 
+		
 	}
 
 	/* createStudent - take in data for a student, make a new Student object, and add it to this.data object
@@ -67,9 +88,24 @@ class SGT_template {
 	return: false if unsuccessful in adding student, true if successful
 	ESTIMATED TIME: 1.5 hours
 	*/
-	createStudent() {
-
-	}
+	createStudent(name,course,grade,id) {
+		
+		if (this.doesStudentExist(id)){
+			return false;
+		} else if (!id){
+			id = 1;
+		} while (this.doesStudentExist(id)){
+		id++
+		
+		}
+		
+		this.data[id] = new Student(id,name,course,grade,this.deleteStudent)
+		
+		return true;
+	} 
+		
+	
+	
 
 	/* doesStudentExist -
 		determines if a student exists by ID.  returns true if yes, false if no
@@ -80,8 +116,14 @@ class SGT_template {
 	return: false if id is undefined or that student doesn't exist, true if the student does exist
 	ESTIMATED TIME: 15 minutes
 	*/
-	doesStudentExist() {
-
+	doesStudentExist(id) {
+		return this.data.hasOwnProperty(id);
+/* 
+		if(this.data[id]){
+			return true;
+		} else {
+			return false;
+		} */
 	}
 
 	/* handleAdd - function to handle the add button click
@@ -95,7 +137,14 @@ class SGT_template {
 	ESTIMATED TIME: 1 hour
 	*/
 	handleAdd() {
+		var name = this.elementConfig.nameInput.val()
+		var grade = this.elementConfig.gradeInput.val()
+		var course = this.elementConfig.courseInput.val()
 
+		this.createStudent(name,course,grade);
+ 
+		this.clearInputs() 
+		this.displayAllStudents()
 	}
 
 	/* readStudent -
@@ -110,9 +159,17 @@ class SGT_template {
 		a singular Student object if an ID was given, an array of Student objects if no ID was given
 		ESTIMATED TIME: 45 minutes
 	*/
-	readStudent() {
-
+	readStudent(id) {
+		if(id !== undefined){ 
+			if(this.data[id]){  // if id is given
+				return this.data[id]
+			}else {
+				return false;
+			}
+	} else {
+		return Object.values(this.data);
 	}
+}
 
 	/* displayAllStudents - iterate through all students in the this.data object
 	purpose:
@@ -127,7 +184,20 @@ class SGT_template {
 	ESTIMATED TIME: 1.5 hours
 	*/
 	displayAllStudents() {
+		
+		/* var studentArr = Object.keys(this.data)
+		for (var i = 0 ; i <= studentArr ; i++) */
+		//this.elementConfig.displayArea.empty();
+		$('#displayArea').empty();
 
+		for(var key in this.data)	
+		$('#displayArea').append(this.data[key].render())
+		
+
+			this.displayAverage();
+
+
+			
 	}
 
 	/* displayAverage - get the grade average and display it
@@ -140,7 +210,19 @@ class SGT_template {
 	*/
 
 	displayAverage() {
+	/* 	var studentArr = Object.keys(this.data)
+		for (var i = 0 ; i <= studentArr ; i++)  */
+		
+		var grades = 0;
+		var keys = Object.keys(this.data);
+		for (var i =0; i<keys.length; i++) {
+			//var gradeData = this.data[keys[i]];
+			grades += this.data[keys[i]].data.grade;
+		}
 
+		var average = grades / keys.length;
+		$('.avgGrade').text(average.toFixed(2));
+		
 	}
 
 	/* deleteStudent -
@@ -156,8 +238,14 @@ class SGT_template {
 		true if it was successful, false if not
 		ESTIMATED TIME: 30 minutes
 	*/
-	deleteStudent() {
-
+	deleteStudent(id) {
+debugger
+		if(this.doesStudentExist(id)){
+			delete this.data[id];
+			return true;
+		} else { 
+			return false;
+		}
 	}
 
 	/* updateStudent -
